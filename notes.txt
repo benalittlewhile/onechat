@@ -1,0 +1,47 @@
+What:
+I want an application that lets me click one button and get a url I can share 
+with one or more people to immediately create a group conversation. This would
+make it SO MUCH EASIER to communicate in situations where one person knows
+something that another person needs, e.g "oh yeah my friend knows that really
+well/my friend's son can give a rec for that". Pls stop the telephone. pls.
+
+How:
+I'm a js dude, so that. Several of that.
+
+
+Data flow:
+I'm torn on this, not sure the "right"/a good way to do it. Thinking mongo
+to make it really easy to sync w/ server..
+
+client visits homepage -> server sends homepage
+click start chat button on homepage -> client hits endpoint to create a chat
+and gets back the id of the chat, then opens the message pane for that chat
+
+client opens chat -> ...
+  see here's the crux, the actual good fancy way would be storing the
+  conversation in browser storage and sending the most recent message the client
+  knows about and only getting the messages it doesn't know about
+    - actually the fancy fancy way would be pagination so we don't get more than
+    necessary 
+  
+  So ideally:
+  Client sends the most recent message it knows about, server sends a number of
+  messages after that message (if they exist) and when needed the client goes
+  and gets more. At the same time, the client sends... I guess websockets since
+  it's a realtime chat? The client has a socket connection to the server
+  (Session based on chat where the server sends any new messages immediately ->
+  they get stored in browser storage along with the rest of them)
+
+What's the mvp then?
+  click button -> get chat pane that makes server requests based on the url
+  chat client opens a socket connection with the server and gets EVERY
+  message in the chat so far, then waits to get new messages. User picks a name,
+  and if any message was sent by that id we show the message as sent by that
+  user. messages sorted by date, show cute little timestamps, etc. etc.
+
+
+
+
+
+
+share with a b

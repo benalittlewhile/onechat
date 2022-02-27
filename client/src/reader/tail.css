@@ -1,0 +1,19 @@
+.tail::before {
+  content: "";
+  position: absolute;
+  height: 0px;
+  border-left: 3vw solid transparent;
+  border-top: 3vw solid #465192;
+  right: -0.5vw;
+  bottom: -3.4vw;
+}
+
+.tail::after {
+  content: "";
+  position: absolute;
+  height: 0px;
+  border-left: 3vw solid transparent;
+  border-top: 3vw solid #3f4349;
+  right: -0.05vw;
+  bottom: -2.4vw;
+}
