@@ -1,19 +1,21 @@
 import "./App.css";
-import { io, Socket } from "socket.io-client";
+import SocketIOCLient, { io, Socket } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { endianness } from "os";
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   const initialText = "Message this group";
   const [socket, setSocket] = useState<Socket>();
   const [chatInput, setChatInput] = useState(initialText);
   const [showSendButton, setShowSendButton] = useState<boolean>();
+  const [messageList, setMessageList] = useState<string[]>([]);
 
   useEffect(() => {
     const newSocket = io(`http://${window.location.hostname}:3000`);
     setSocket(newSocket);
-    console.log(chatInput);
+    newSocket.on("serverMessage", (newMessage) => {
+      console.log(`received ${newMessage}`);
+      setMessageList((arr) => [...arr, newMessage]);
+    });
     return () => {
       newSocket.close();
     };
@@ -21,7 +23,7 @@ function App() {
 
   let handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChatInput(event?.target?.value);
-    if (chatInput != initialText) {
+    if (chatInput !== initialText) {
       setShowSendButton(true);
     }
     // event.target.style.height = "auto";
@@ -36,9 +38,24 @@ function App() {
   };
 
   let handleFocusLoss = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (chatInput == "") {
+    if (chatInput === "") {
       setChatInput(initialText);
       setShowSendButton(false);
+    }
+  };
+
+  let submit = () => {
+    console.log("sending?");
+    socket?.emit("message", chatInput);
+    setMessageList((arr) => [...arr, chatInput]);
+    // setChatInput(initialText);
+    setChatInput("");
+    setShowSendButton(false);
+  };
+
+  let handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      submit();
     }
   };
 
@@ -46,32 +63,47 @@ function App() {
   function sendButton() {
     if (showSendButton === undefined) {
       return (
-        <img src="/blurplearrow.png" className={"rounded-full w-0 collapse"} />
+        <button onClick={submit}>
+          <img
+            src="/blurplearrow.png"
+            className={"rounded-full w-0 collapse"}
+          />
+        </button>
       );
     }
 
     if (showSendButton === true) {
       return (
-        <img
-          src="/blurplearrow.png"
-          className={"rounded-full w-0 collapse fade-in"}
-        />
+        <button onClick={submit}>
+          <img
+            src="/blurplearrow.png"
+            className={"rounded-full w-0 collapse fade-in"}
+          />
+        </button>
       );
     } else
       return (
-        <img
-          src="/blurplearrow.png"
-          className={"rounded-full w-0 collapse fade-out"}
-        />
+        <button onClick={submit}>
+          <img
+            src="/blurplearrow.png"
+            className={"rounded-full w-0 collapse fade-out"}
+          />
+        </button>
       );
   }
   return (
     <div className="App">
       <div id="chat" className="App bg-[#36393e]">
+        <ul className="z-20 w-full h-80 ">
+          {messageList.map((message) => (
+            <li className="text-white text-base w-full h-10">{message}</li>
+          ))}
+        </ul>
         <div
           className="center w-48 h-12 bg-slate-500 text-white"
           onClick={() => {
             setShowSendButton(!showSendButton);
+            console.log("??");
           }}
         >
           fuck
@@ -94,6 +126,8 @@ function App() {
               onChange={handleInputChange}
               onClick={handleInputClick}
               onBlur={handleFocusLoss}
+              onSubmit={submit}
+              onKeyDown={handleKeyDown}
               maxLength={1024 * 512}
             />
             {sendButton()}

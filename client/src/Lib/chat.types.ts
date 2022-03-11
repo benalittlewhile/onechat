@@ -1,5 +1,4 @@
 export interface IChatMessage extends Document {
-  _id: string;
   chatId: string;
   sentAt: Date;
   sentBy: string; // User Name
