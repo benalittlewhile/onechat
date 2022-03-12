@@ -11,7 +11,6 @@ module.exports = {
         dtextinput: "#40444b",
       },
     },
-    extend: {},
   },
   plugins: [],
 };
