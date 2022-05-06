@@ -88,7 +88,7 @@ export default function InputBar(props: {
       >
         <input
           className={
-            "text-white bg-[#4a4c51] h-full w-full rounded-full p-2 outline-none block "
+            "text-white bg-dtextinput h-full w-full rounded-full p-2 outline-none block "
           }
           value={chatInput}
           onChange={handleInputChange}

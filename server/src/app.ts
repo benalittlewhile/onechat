@@ -14,14 +14,20 @@ try {
   const io = new socketServer(expressServer);
 
   io.on("connection", (socket) => {
+    if (socket.handshake.query.chatId) {
+      const chatId = socket.handshake.query.chatId;
+      socket.join(chatId);
+      console.log(`newsocket joined chat ${chatId}`);
+      socket.on("message", (messageText) => {
+        console.log(`message has type ${typeof messageText}`);
+        if (typeof messageText != "string") {
+          console.log(JSON.stringify(messageText));
+        }
+        console.log(messageText);
+        socket.to(chatId).emit("serverMessage", messageText);
+      });
+    }
     console.log("new connection");
-    socket.on("banana", () => {
-      console.log("banana");
-    });
-    socket.on("message", (messageText) => {
-      console.log(messageText);
-      socket.broadcast.emit("serverMessage", messageText);
-    });
   });
 
   // routes
